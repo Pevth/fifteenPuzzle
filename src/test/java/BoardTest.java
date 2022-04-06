@@ -1,5 +1,8 @@
 import org.junit.jupiter.api.Test;
 
+import java.util.Comparator;
+import java.util.PriorityQueue;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class BoardTest {
@@ -41,6 +44,31 @@ class BoardTest {
         boardD.printBoard();
         System.out.println("Movement checker: " +boardD.checkMov());
         System.out.println("Verify checker: " +boardD.checkVerify());
+
+        Comparator<Board> recursionSort = Comparator.comparing(Board::getRecursionLevel);
+        PriorityQueue<Board> priorityQueue = new PriorityQueue<>(recursionSort);
+
+        boardD.recursionLevel = 2;
+        boardR.recursionLevel = 3;
+        boardL.recursionLevel = 5;
+
+        priorityQueue.add(boardL);
+        priorityQueue.add(boardL);
+        priorityQueue.add(boardD);
+        priorityQueue.add(boardR);
+        priorityQueue.add(boardL);
+
+        System.out.println(priorityQueue);
+
+        while(true)
+        {
+            Board e = priorityQueue.poll();
+            System.out.println(e);
+
+            if(e == null) break;
+        }
+
+        System.out.println(priorityQueue);
 
 
 

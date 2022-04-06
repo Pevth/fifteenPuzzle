@@ -7,6 +7,7 @@ public class Board {
             {13,14,15,0}};
 
     public int[][] tableGame;
+    public String hashString = "";
 
     public int indexY;
     public int indexX;
@@ -15,6 +16,24 @@ public class Board {
     public int recursionLevel;
     public char blockMove;
     private boolean checkMovement = false;
+    public int distance;
+
+        private void generateHashString() {
+            for (int i = 0; i < sizeN; i++) {
+                for (int j = 0; j < sizeM; j++) {
+                    hashString += (char)(tableGame[i][j]+65);
+                    }
+                }
+            }
+
+        public void generateHashStringDFS() {
+            for (int i = 0; i < sizeN; i++) {
+                for (int j = 0; j < sizeM; j++) {
+                    this.hashString += (char)(tableGame[i][j]+65);
+                }
+            }
+            this.hashString += recursionLevel;
+        }
 
         private void checkIndex() {
         for (int i = 0; i < sizeN; i++) {
@@ -107,6 +126,43 @@ public class Board {
             }
         }
 
+        public int calculateHammingDistance(){
+            int counter = 1;
+            int H = this.recursionLevel;
+            for(int i=0;i<this.sizeN;i++){
+                for(int j=0;j<this.sizeM; j++){
+                    if(i*j==(this.sizeN-1)*(this.sizeN-1)){
+                        if(this.tableGame[i][j] != 0 ) {
+                            H++;
+                        }
+                    }
+                    else if(this.tableGame[i][j] != counter){
+                        H++;
+                    }
+                    counter++;
+                }
+            }
+            return H;
+        }
+
+        public int calculateManhattanDistance(){
+            int counter = 1;
+            int M = this.recursionLevel;
+            for(int i=0;i<this.sizeN;i++){
+                for(int j=0;j<this.sizeM; j++){
+                    if(this.tableGame[i][j] != counter && this.tableGame[i][j] !=0){
+                        int rightRow = (this.tableGame[i][j]-1)/this.sizeN;
+                        int rightColumn = (this.tableGame[i][j]-1) % this.sizeM;
+                        M += Math.abs(rightRow - i) + Math.abs(rightColumn - j);
+                    }
+                    counter++;
+                }
+            }
+            //System.out.println("Dystans:" + M);
+            return M;
+        }
+
+
         private void zero() {
             this.checkMovement = true;
         }
@@ -128,7 +184,7 @@ public class Board {
         }
 
         public Board(int n, int m, int[][] tab, char movType) {
-            tableGame = new int[4][5];
+            tableGame = new int[n][m];
             sizeN = n;
             sizeM = m;
             copyBoard(tab);
@@ -141,6 +197,7 @@ public class Board {
                 case 'D' -> down();
                 default -> zero();
             }
+            generateHashString();
         }
 
         public Board(int n, int m, int[][] tab, char movType, int level) {
@@ -158,7 +215,65 @@ public class Board {
                 case 'D' -> down();
                 default -> zero();
             }
+            //generateHashStringDFS();
         }
+
+        public Board(int n, int m, int[][] tab, char movType, char heuristicType, int level)
+        {
+            this.recursionLevel = level;
+            switch(heuristicType)
+            {
+                case 'M':
+                    tableGame = new int[n][m];
+                    sizeN = n;
+                    sizeM = m;
+                    copyBoard(tab);
+                    checkIndex();
+                    blockMove(movType);
+                    switch (movType) {
+                        case 'L' -> left();
+                        case 'R' -> right();
+                        case 'U' -> up();
+                        case 'D' -> down();
+                        default -> zero();
+                    }
+                    distance = calculateManhattanDistance();
+                    generateHashString();
+
+                    break;
+                case 'H':
+                    tableGame = new int[n][m];
+                    sizeN = n;
+                    sizeM = m;
+                    copyBoard(tab);
+                    checkIndex();
+                    blockMove(movType);
+                    switch (movType) {
+                        case 'L' -> left();
+                        case 'R' -> right();
+                        case 'U' -> up();
+                        case 'D' -> down();
+                        default -> zero();
+                    }
+                    distance = calculateHammingDistance();
+                    generateHashString();
+                    break;
+
+            }
+        }
+        public int getRecursionLevel() {
+            return recursionLevel;
+        }
+
+        public int getDistance() {
+            return distance;
+        }
+
+
+    @Override
+    public String toString() {
+        return "Board [distance="+distance+"][recursion="+recursionLevel+"]";
+    }
 }
 
 

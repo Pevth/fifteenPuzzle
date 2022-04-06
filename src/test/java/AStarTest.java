@@ -8,7 +8,7 @@ import java.io.IOException;
 import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-class BFSTest {
+class AStarTest {
 
     int n;
     int m;
@@ -40,17 +40,39 @@ class BFSTest {
     }
 
     @Test
-    void checkBFS() throws IOException {
-
+    void checkManhattan() throws IOException, InterruptedException {
+        int a = 0;
         for (int z = 1; z < 413; z++) {
             int[][] tableGame = generateTable("src/test/java/TestTables/file_" + z);
-            BFS bfs = new BFS(tableGame, n, m);
-            boolean test = bfs.startSearching();
+            AStar aStar = new AStar(tableGame, n, m);
+            boolean test = aStar.startSearchingAStar('M');
             //Assertions.assertTrue(test);
-            System.out.println("Tablica: file_" + z + " Test: " + test + " Czas: " + bfs.time);
-            sumTime += bfs.time;
+            System.out.println("Tablica: file_" + z + " Test: " + test + " Czas: " + aStar.time);
+           if(test == true) {
+               a++;
+           }
+            sumTime += aStar.time;
 
         }
-        System.out.println("Suma czasu: " + sumTime);
+        System.out.println("Suma czasu: " + sumTime + " | Poprawnych wynikow: " + a);
     }
+
+    @Test
+    void checkHamming() throws IOException, InterruptedException {
+        int a = 0;
+        for (int z = 1; z < 413; z++) {
+            int[][] tableGame = generateTable("src/test/java/TestTables/file_" + z);
+            AStar aStar = new AStar(tableGame, n, m);
+            boolean test = aStar.startSearchingAStar('H');
+            //Assertions.assertTrue(test);
+            System.out.println("Tablica: file_" + z + " Test: " + test + " Czas: " + aStar.time);
+            if(test == true) {
+                a++;
+            }
+            sumTime += aStar.time;
+
+        }
+        System.out.println("Suma czasu: " + sumTime + " | Poprawnych wynikow: " + a);
+    }
+
 }
